@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+{% block title %}Chat Interface{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            max-height: 80vh;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .chat-input {
+            border-top: 1px solid #ddd;
+            padding: 10px;
+        }
+        .message {
+            margin-bottom: 15px;
+        }
+        .message.user {
+            text-align: right;
+        }
+        .message.user .message-content {
+            background-color: #dcf8c6;
+            display: inline-block;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .message.bot .message-content {
+            background-color: #f1f0f0;
+            display: inline-block;
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="container-fluid chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be dynamically inserted here -->
+        </div>
+        <div class="chat-input">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Type a message" id="message-input">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" id="send-button">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 在页面加载完成后立即显示欢迎信息
+            var welcomeMessage = '你好，有什么需要帮助的吗';
+            var welcomeMessageHtml = '<div class="message bot"><div class="message-content">' + welcomeMessage + '</div></div>';
+            $('#chat-messages').append(welcomeMessageHtml);
+
+            $('#send-button').on('click', function () {
+                var message = $('#message-input').val();
+                if (message.trim() !== '') {
+                    var userMessageHtml = '<div class="message user"><div class="message-content">' + message + '</div></div>';
+                    $('#chat-messages').append(userMessageHtml);
+                    $('#message-input').val('');
+                    // 发送用户消息到后端
+                    $.ajax({
+                        url: '/get_response',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({message: message}),
+                        success: function(response) {
+                            var botMessageHtml = '<div class="message bot"><div class="message-content">' + response + '</div></div>';
+                            $('#chat-messages').append(botMessageHtml);
+                        }
+                    });
+                }
+            });
+
+            $('#message-input').on('keypress', function (e) {
+                if (e.which == 13) {
+                    $('#send-button').click();
+                }
+            });
+        });
+    </script>
+{% endblock javascripts %}
