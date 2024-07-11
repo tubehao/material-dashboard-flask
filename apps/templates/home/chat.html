@@ -58,11 +58,12 @@
 
 {% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         $(document).ready(function () {
             // 在页面加载完成后立即显示欢迎信息
             var welcomeMessage = '你好，有什么需要帮助的吗';
-            var welcomeMessageHtml = '<div class="message bot"><div class="message-content">' + welcomeMessage + '</div></div>';
+            var welcomeMessageHtml = '<div class="message bot"><div class="message-content">' + marked.parse(welcomeMessage) + '</div></div>';
             $('#chat-messages').append(welcomeMessageHtml);
 
             $('#send-button').on('click', function () {
@@ -78,7 +79,7 @@
             function sendMessage() {
                 var message = $('#message-input').val();
                 if (message.trim() !== '') {
-                    var userMessageHtml = '<div class="message user"><div class="message-content">' + message + '</div></div>';
+                    var userMessageHtml = '<div class="message user"><div class="message-content">' + marked.parse(message) + '</div></div>';
                     $('#chat-messages').append(userMessageHtml);
                     $('#message-input').val('');
                     // 发送用户消息到后端
@@ -88,7 +89,7 @@
                         contentType: 'application/json',
                         data: JSON.stringify({message: message}),
                         success: function(response) {
-                            var botMessageHtml = '<div class="message bot"><div class="message-content">' + response + '</div></div>';
+                            var botMessageHtml = '<div class="message bot"><div class="message-content">' + marked.parse(response) + '</div></div>';
                             $('#chat-messages').append(botMessageHtml);
                         }
                     });
