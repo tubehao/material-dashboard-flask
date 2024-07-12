@@ -51,6 +51,12 @@ def initialize_model(app):
         tokenizer=model_id,
         device=2  # 如果没有GPU，设置为-1
     )
+    app.config['MODEL_PURE'] = transformers.pipeline(
+        "text-generation",
+        model=model_id,
+        tokenizer=model_id,
+        device=1  # 如果没有GPU，设置为-1
+    )
 
 def initialize_neo4j(app):
     uri = "bolt://localhost:7687"  # 根据需要替换为您的实际地址

@@ -31,11 +31,18 @@
             padding: 10px;
             border-radius: 10px;
         }
+        .message.bot {
+            width: 70%;
+        }
         .message.bot .message-content {
             background-color: #f1f0f0;
-            display: inline-block;
+            display: flex;
+            justify-content: space-between;
             padding: 10px;
             border-radius: 10px;
+        }
+        .message.bot .message-content .column {
+            width: 48%;
         }
     </style>
 {% endblock stylesheets %}
@@ -89,7 +96,7 @@
                         contentType: 'application/json',
                         data: JSON.stringify({message: message}),
                         success: function(response) {
-                            var botMessageHtml = '<div class="message bot"><div class="message-content">' + marked.parse(response) + '</div></div>';
+                            var botMessageHtml = '<div class="message bot"><div class="message-content"><div class="column">' + marked.parse(response.solution_part1) + '</div><div class="column">' + marked.parse(response.solution_part2) + '</div></div></div>';
                             $('#chat-messages').append(botMessageHtml);
                         }
                     });
