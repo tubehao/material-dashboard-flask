@@ -21,7 +21,7 @@ def get_response():
     pipeline_pure = current_app.config['MODEL_PURE']
     
     # 构建提示以生成Cypher查询语句
-    prompt = f"Our dataset contains a knowledge graph stored in a Neo4j database. With node including rdfs__label, rdfs__comment, <elementId>, <id> and uri. Translate the following natural language query into a Cypher query for Neo4j and wrap the query with '```' \n \n for example, if the natural language query is 'What's basketball', the Cypher query should be like '```MATCH (n)-[r]-(neighbor) WHERE n.rdfs__label CONTAINS 'Basketball' RETURN n, r, neighbor LIMIT 25```'.\nNatural Language Query: {user_message}\n\n\n\nCypher Query:"
+    prompt = f"Our dataset contains a knowledge graph stored in a Neo4j database. With node including  rdfs__comment, rdfs__label, <elementId>, <id> and uri. Translate the following natural language query into a Cypher query for Neo4j and wrap the query with '```' \n \n for example, if the natural language query is 'Introduce basketball', the Cypher query should be like '```MATCH (n)-[r]-(neighbor) WHERE n.rdfs__comment CONTAINS 'basketball' OR n.rdfs__label CONTAINS 'basketball' RETURN n, r, neighbor LIMIT 25```'.\nNatural Language Query: {user_message}\n\n\n\nCypher Query:"
     
     # 调用模型生成输出
     output = pipeline_prompt(prompt, max_new_tokens=100)
@@ -69,6 +69,8 @@ def get_response():
     print(important_results)
     # result_prompt = f"Knowledge: {important_results}\n\n Use the knowledge to answer the following question.  Don't contain the query result in your answer directly, you can just use it to help you. \n\n Question:{user_message}.\nAnswer:"
     result_prompt = f"Knowledge: {important_results}. Use the knowledge to address the following question. Don't contain it in your answer directly, you can just refer to it. \n\n Question: {user_message}. \n Answer:"
+    # result_prompt = f"The following knowledge is retrieved from yago and contains the related node and edge, n represents the related concept while r and neighbor represents its neighbor. Knowledge: {important_results}. Use the knowledge to address the following question. Don't contain it in your answer directly, you can just refer to it. \n\n Question: {user_message}. \n Answer:"
+
 
     final_output = pipeline_chat(result_prompt, max_new_tokens=200)
     solution = final_output[0]['generated_text'].strip()

@@ -11,6 +11,7 @@ class Config(object):
 
     # Assets Management
     ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets')  
+    UPLOAD_FOLDER = os.path.join(basedir, 'uploads')
     
     # Set up the App SECRET_KEY
     SECRET_KEY  = os.getenv('SECRET_KEY', None)
